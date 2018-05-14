@@ -38,9 +38,9 @@ spotify.search({ type: 'track', query: 'All the Small Things' }, function (err, 
     console.log((data.tracks.items[0].uri));
 });
 
-var params = {screen_name: 'nodejs'};
-client.get('statuses/user_timeline', params, function(error, tweets, response) {
-  if (!error) {
-    console.log(tweets);
-  }
-});
+//var params = {screen_name: 'nodejs', count: '2'};
+client.post('statuses/update', {status: 'Node.js tweet(!)'}, function(error, tweet, response) {
+    if (!error) {
+      console.log(tweet);
+    }
+  });
