@@ -52,16 +52,11 @@ Do not overwrite your file each time you run a command.
 
 */
 
-
-
 //Required Modules-
 
 //Private User Key Storage
 require('dotenv').config();
 var keys = require("../ziri-js/keys");
-
-//User Input Library
-var inquirer = require("inquirer");
 
 //File System Access
 var fs = require("fs");
@@ -74,10 +69,6 @@ var Twitter = require('twitter');
 
 //API Request
 var request = require("request");
-
-//Mashape Module used for Getting Netflix Info
-var unirest = require('unirest');
-
 
 
 //Initial Module ID Setup
@@ -109,7 +100,6 @@ getUserInput(process.argv[2], process.argv[3]);
 
 //Main application
 function getUserInput(app, param) {
-
 
     //Set User Input in Node to variables- liri application initializes preset applications and the unique parameter runs unique user queries into those applications that may require input
     var liriApplication = app;
@@ -291,7 +281,6 @@ function omdbSearch(userInput) {
             //Call the RT rating function 
             getRottenTomatoes(movieInfo.Ratings);
 
-            console.log(movieInfo);
             //Construct the Movie Info String with the Specific Data we want and log it to the console.  
             console.log(`
             \nOMDB Search Result for: '${query}'
@@ -326,9 +315,6 @@ function random() {
         if (error) {
             return console.log(error);
         }
-
-        // We will then print the contents of data
-        console.log(data);
 
         // Then split it by commas (to make it more readable)
         var dataArr = data.split(",");
