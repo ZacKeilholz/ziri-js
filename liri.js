@@ -1,12 +1,35 @@
-//Required Files
+/*
+Project Requirements:
+
+1. LIRI will display your latest tweets. As we do not want to display your personal account, or its keys, please make an alias account and add a few tweets to it!
+
+2. 
+
+*/
+
+//Required Modules-
+
+//Private User Key Storage
 require('dotenv').config();
 var keys = require("../ziri-js/keys");
 
-//Required Modules
+//User Input Library
 var inquirer = require("inquirer");
+
+//File System Access
 var fs = require("fs");
+
+//Spotify API Access
 var Spotify = require('node-spotify-api');
+
+//Twitter API Access
 var Twitter = require('twitter');
+
+//API Request
+var request = require("request");
+
+
+
 
 
 //Initial Module ID Setup
