@@ -109,11 +109,21 @@ var spotify = new Spotify({
 getUserInput();
 
 //Main application
-function getUserInput() {
+function getUserInput(randomApplication, randomUniqueParameter) {
 
     //Set User Input in Node to variables- liri application initializes preset applications and the unique parameter runs unique user queries into those applications that may require input
     var liriApplication = process.argv[2];
     var liriUniqueParameter = process.argv[3];
+
+    if (randomApplication) {
+        liriApplication = randomApplication;
+    };
+
+    if (randomUniqueParameter) {
+        liriUniqueParameter = randomUniqueParameter;
+        console.log(liriUniqueParameter);
+    };
+    
 
     switch (liriApplication) {
 
@@ -125,13 +135,16 @@ function getUserInput() {
 
             break;
 
-        case "node-spotify-api":
+        case "spotify-this-song":
 
             //May need to add if statement for when unique parameter doesn't exist
-            nodeSpotifyApi(liriUniqueParameter);
+            spotifyThisSong(liriUniqueParameter);
 
             break;
 
+        case "random":
+
+            random();
 
         default:
             break;
@@ -192,13 +205,15 @@ function myTweets(userInput) {
 //SPOTIFY LIRI APPLICATION 
 //===================================
 
-function nodeSpotifyApi(userInput) {
+function spotifyThisSong(userInput) {
 
-// -The song's name
-// A preview link of the song from Spotify
-// -The album that the song is from
-// -If no song is provided then your program will default to "The Sign" by Ace of Base.
+    //Requirements:
+    // -The song's name
+    // A preview link of the song from Spotify
+    // -The album that the song is from
+    // -If no song is provided then your program will default to "The Sign" by Ace of Base.
 
+    //Create a Query String that will be filled by the userInput (or defaults to All the Small things)
     var query = "";
 
     if (userInput) {
@@ -208,12 +223,18 @@ function nodeSpotifyApi(userInput) {
         console.log(`Now Searching for '${query}' because you didn't enter a song!`);
     };
 
+    //Search Spotify for the specific Query
     spotify.search({ type: 'track', query: query }, function (err, data) {
 
+        //Error handling First
         if (err) {
             return console.log('Error occurred: ' + err);
         }
+
+        //Simplify the returned data object
         var songEntry = data.tracks.items[0];
+
+        //Grab specific items from the object and output them to the terminal in a visually pleasing way
         console.log(`
         \nHuzzah!  A song was found! (But is it the RIGHT one...)
         \nSong Title: ${songEntry.name} By ${songEntry.artists[0].name}
@@ -224,7 +245,30 @@ function nodeSpotifyApi(userInput) {
 }
 
 
+//RANDOM Function-
+//=========================
+// When user inputs 'random', this function pulls a random selection from random.txt and recursively runs this selection into the main code function
 
+function random() {
+
+    fs.readFile("./random.txt", "utf8", function (error, data) {
+
+        // If the code experiences any errors it will log the error to the console.
+        if (error) {
+            return console.log(error);
+        }
+
+        // We will then print the contents of data
+        console.log(data);
+
+        // Then split it by commas (to make it more readable)
+        var dataArr = data.split(",");
+
+        getUserInput(dataArr[0],dataArr[1]);
+      
+    });
+
+}
 
 
 
