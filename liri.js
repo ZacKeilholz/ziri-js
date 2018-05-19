@@ -50,8 +50,6 @@ Make sure you append each command you run to the log.txt file.
 Do not overwrite your file each time you run a command.
 
 
-
-
 */
 
 
@@ -76,6 +74,10 @@ var Twitter = require('twitter');
 
 //API Request
 var request = require("request");
+
+//Mashape Module used for Getting Netflix Info
+var unirest = require('unirest');
+
 
 
 //Initial Module ID Setup
@@ -102,28 +104,18 @@ var spotify = new Spotify({
 //1.  Get User Input- 
 //Parameter A is the users choice of application we want to run in the liri program and Parameter 'B' is the user input we want to use WITHIN that specific liri program.
 
-//Reach Goal- use inquirer library instead of process.argv
-
-
 //Initialize Main Application
-getUserInput();
+getUserInput(process.argv[2], process.argv[3]);
 
 //Main application
-function getUserInput(randomApplication, randomUniqueParameter) {
+function getUserInput(app, param) {
+
 
     //Set User Input in Node to variables- liri application initializes preset applications and the unique parameter runs unique user queries into those applications that may require input
-    var liriApplication = process.argv[2];
-    var liriUniqueParameter = process.argv[3];
+    var liriApplication = app;
+    var liriUniqueParameter = param;
 
-    if (randomApplication) {
-        liriApplication = randomApplication;
-    };
-
-    if (randomUniqueParameter) {
-        liriUniqueParameter = randomUniqueParameter;
-        console.log(liriUniqueParameter);
-    };
-
+    logFile(app, param);
 
     switch (liriApplication) {
 
@@ -155,6 +147,7 @@ function getUserInput(randomApplication, randomUniqueParameter) {
             break;
 
         default:
+            userOptions();
             break;
     }
 
@@ -298,6 +291,7 @@ function omdbSearch(userInput) {
             //Call the RT rating function 
             getRottenTomatoes(movieInfo.Ratings);
 
+            console.log(movieInfo);
             //Construct the Movie Info String with the Specific Data we want and log it to the console.  
             console.log(`
             \nOMDB Search Result for: '${query}'
@@ -309,7 +303,10 @@ function omdbSearch(userInput) {
             \nLanguage: ${movieInfo.Language}
             \nPlot: ${movieInfo.Plot}
             \nActors: ${movieInfo.Actors}
+
             `);
+
+
         } else {
             console.log(error);
         }
@@ -343,12 +340,40 @@ function random() {
 }
 
 
-
-//3. Run random client action from random.txt- for example, run the spotify action for "I want it that Way" using FS and running the random.txt into our previously created liri program.
-
 //4. Log user search data to a log.txt file.
 
-//5. Modularize this application
+function logFile(app, param) {
+
+    //Create Log File Constructor Object
+    var Log = function (a, p) {
+        this.a = a;
+        this.p = p;
+    }
+
+    //Create Log Entry Using Constructor and input arguments
+    var newLog = new Log(app, param);
+
+    //Append Object to the Log File
+    fs.appendFile("log.txt", JSON.stringify(newLog), function (err) {
+        if (err) {
+            return console.log(err);
+        }
+    });
+}
+
+
+//Return a list of options/a how-to for this application of no parameters are entered
+function userOptions() {
+
+    console.log(`
+    \nLiri is a Terminal App for Getting Tweets, Finding Spotify Songs, And Getting OMDB Movie Data.
+    \nType "my-tweets" and a username for Tweets
+    \nType "spotify-this-song" and a song name for Songs
+    \nType "movie-this" and a movie title for Movie Info
+    `);
+}
+
+//5. Modularize this application!
 
 
 
