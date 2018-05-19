@@ -159,7 +159,7 @@ function myTweets(userInput) {
     //for the GET request to Twitter- Use my Screenname and count of 20
     var params = {
         screen_name: 'zacharydoes',
-        count: 2
+        count: 20
     };
 
     //Check for a userInput Screen Name
@@ -173,22 +173,53 @@ function myTweets(userInput) {
     }
 
     //Get Request to Twitter- takes params object as the unique input.  
-    client.get('statuses/user_timeline', params, function (error, tweets, response) {
-        //Parse the retrieved Twitter Array and console log each tweet text
-        tweets.forEach(function (tweet, index) {
-            console.log(`Tweet ${index + 1}: ${tweet.text}. Created At: ${tweet.created_at}`);
-        });
-    });
+    client.get('statuses/user_timeline', params, function (error, tweets) {
 
+        //Handle Error First if there is one.
+        if (!error) {
+
+            //Parse the retrieved Twitter Array and console log each tweet text
+            tweets.forEach(function (tweet, index) {
+                console.log(`Tweet ${index + 1}: ${tweet.text}. Created At: ${tweet.created_at}`);
+            });
+        } else {
+            console.log(error);
+        }
+    });
 }
 
 
 //SPOTIFY LIRI APPLICATION 
 //===================================
 
-function nodeSpotifyApi(userInput)  {
+function nodeSpotifyApi(userInput) {
 
+// -The song's name
+// A preview link of the song from Spotify
+// -The album that the song is from
+// -If no song is provided then your program will default to "The Sign" by Ace of Base.
 
+    var query = "";
+
+    if (userInput) {
+        query = userInput;
+    } else {
+        query = 'All the Small Things';
+        console.log(`Now Searching for '${query}' because you didn't enter a song!`);
+    };
+
+    spotify.search({ type: 'track', query: query }, function (err, data) {
+
+        if (err) {
+            return console.log('Error occurred: ' + err);
+        }
+        var songEntry = data.tracks.items[0];
+        console.log(`
+        \nHuzzah!  A song was found! (But is it the RIGHT one...)
+        \nSong Title: ${songEntry.name} By ${songEntry.artists[0].name}
+        \nLink: ${songEntry.external_urls.spotify}
+        `);
+    });
 
 }
 
@@ -207,10 +238,3 @@ function nodeSpotifyApi(userInput)  {
 
 
 
-
-spotify.search({ type: 'track', query: 'All the Small Things' }, function (err, data) {
-    if (err) {
-        return console.log('Error occurred: ' + err);
-    }
-    console.log((data.tracks.items[0].uri));
-});
