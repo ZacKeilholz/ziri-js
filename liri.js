@@ -123,7 +123,7 @@ function getUserInput(randomApplication, randomUniqueParameter) {
         liriUniqueParameter = randomUniqueParameter;
         console.log(liriUniqueParameter);
     };
-    
+
 
     switch (liriApplication) {
 
@@ -135,6 +135,7 @@ function getUserInput(randomApplication, randomUniqueParameter) {
 
             break;
 
+        //Run Spotify Function
         case "spotify-this-song":
 
             //May need to add if statement for when unique parameter doesn't exist
@@ -142,9 +143,16 @@ function getUserInput(randomApplication, randomUniqueParameter) {
 
             break;
 
+        //Run OMDB Function
+        case "movie-this":
+
+            omdbSearch(liriUniqueParameter);
+            break;
+
         case "random":
 
             random();
+            break;
 
         default:
             break;
@@ -244,6 +252,70 @@ function spotifyThisSong(userInput) {
 
 }
 
+//OMDB SEARCH FUNCTION-
+//=========================
+//Takes User Input, Creates a Query URL, Submits a GET request to OMDB, outputs cleaned up results to user in terminal
+
+function omdbSearch(userInput) {
+
+    //User Input
+    var query = "";
+
+    if (userInput) {
+        query = userInput;
+    } else {
+        query = "Mad Max";
+        console.log(`Now Searching OMDB for '${query}' because you didn't enter a Movie Title!`);
+    };
+
+    //Construct Query URL from user input string
+    var queryUrl = "http://www.omdbapi.com/?t=" + query + "&y=&plot=short&apikey=trilogy";
+
+
+    //Send Request to OMDB
+    request(queryUrl, function (error, response, body) {
+
+        // If the request is successful
+        if (!error && response.statusCode === 200) {
+
+            //Parse movie object
+            var movieInfo = JSON.parse(body);
+
+            //Construct String to Display in Terminal
+
+            //Rotten Tomatoes Functions
+            var rtRating = "";
+
+            //Take Ratings Array from Movie object, find out if Rotten Tomatoes is part of this array, and return the value of the RT rating
+            function getRottenTomatoes(ratingInput) {
+                ratingInput.forEach(function (element) {
+                    if (element.Source == 'Rotten Tomatoes') {
+                        rtRating = element.Value;
+                    }
+                });
+            }
+
+            //Call the RT rating function 
+            getRottenTomatoes(movieInfo.Ratings);
+
+            //Construct the Movie Info String with the Specific Data we want and log it to the console.  
+            console.log(`
+            \nOMDB Search Result for: '${query}'
+            \nTitle: ${movieInfo.Title}
+            \nYear: ${movieInfo.Year}
+            \nIMDB Rating: ${movieInfo.imdbRating}
+            \nRotten Tomatoes Rating: ${rtRating}
+            \nCountry: ${movieInfo.Country}
+            \nLanguage: ${movieInfo.Language}
+            \nPlot: ${movieInfo.Plot}
+            \nActors: ${movieInfo.Actors}
+            `);
+        } else {
+            console.log(error);
+        }
+    });
+
+};
 
 //RANDOM Function-
 //=========================
@@ -264,8 +336,8 @@ function random() {
         // Then split it by commas (to make it more readable)
         var dataArr = data.split(",");
 
-        getUserInput(dataArr[0],dataArr[1]);
-      
+        getUserInput(dataArr[0], dataArr[1]);
+
     });
 
 }
